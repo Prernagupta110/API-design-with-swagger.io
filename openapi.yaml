@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: Book Management API
+  description: Details of Book Management
+  version: 1.0.0
+paths:
+  /book:
+    post:
+      requestBody:
+        description: Create a new book
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '201':
+          description: Book successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '422':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        'default':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        
+  /books:
+    get:
+      parameters:
+        - in: query
+          name: author
+          schema:
+           type: string
+           default: author
+      description: Get a list of books
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Books'
+        '404':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        'default':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'          
+  /book/{book_id}:
+    get:
+      description: specific book by ID
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Here is the Book by ID
+        '404':
+          description: err
+        'default':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'  
+    put:
+      summary: Update a specific book by ID
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: string
+      requestBody:  
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Book successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        '404':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error' 
+        'default':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'        
+    delete:
+      summary: Delete a specific book by ID
+      parameters:
+        - in: path
+          name: book_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        'default':
+          description: err
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'        
+          
+components:
+  schemas:
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        author:
+          type: string
+          maxLength: 50
+        isbn:
+          type: string
+          minLength: 13
+          maxLength: 13
+        rating:
+          type: number
+          minimum: 0
+          maximum: 5
+        publish_date:
+          type: string
+          format: date-time
+      required:
+          - id
+          - name
+          - author
+          - isbn
+          - rating
+          - publish_date
+          
+    
+    Books:
+      type: array
+      items:
+        $ref: '#/components/schemas/Book'
+
+    Success:
+      type: object
+      properties:
+        message:
+          type: string
+        id: 
+          type: string
+
+    Error:
+      type: object
+      properties:
+        message: 
+          type: string
